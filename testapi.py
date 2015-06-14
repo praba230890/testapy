@@ -4,23 +4,42 @@ import json
 def test_api(test_data):
     api = get_api(test_data)
     method = test_data["method"]
-#    cases = test_data["data_set_count"]
     auth_details = get_auth_details(test_data)
-#    data_set_count = get_data_set_count(test_data)
-#    parameters = [get_parameters(data_set_count, test_data)]
-    parameters_per_url = get_parameters_per_url(test_data)
-    url_parameters = get_url_parameters(parameters_per_url, test_data)
-    results = get_results(url_parameters, test_data)
-    
+    data_set_count = get_data_set_count(test_data)
+    if method == 'get':
+        parameters_per_url = get_parameters_per_url(test_data)
+        url_parameters = get_url_parameters(parameters_per_url, test_data)
+        results = get_results(url_parameters, test_data)
+        test_get(api, auth_details, url_parameters, results)
+    elif method == 'post':
+        parameters = get_parameters(data_set_count, test_data)
+        results = get_results(parameters, test_data)
+        test_post(api, auth_details, parameters, results)
+
+def test_get(api, auth_details, url_parameters, results):
     for i in range(len(url_parameters)):
         request_api = api
         for parameter in url_parameters[i]:
             request_api += str(parameter)
         response = requests.get(request_api, auth=auth_details)
+        print response.json()
         if dict(response.json()) == results[i]:
             print "Success: For "+request_api+" : with parameter ["+str(url_parameters)+"] the expected result ["+str(results[i])+"] is achieved"
         else:
             print "Failed: For "+request_api+" : with parameter ["+str(url_parameters)+"] the expected result ["+str(results[i])+"] not achieved"
+
+def test_post(api, auth_details, parameters, results):
+    for parameter in parameters:
+        print parameter
+        response = requests.post(api, data=parameter, auth=auth_details)
+        print response.json()
+        print dict(response.json())
+        print results[parameters.index(parameter)]
+        if dict(response.json()) == results[parameters.index(parameter)]:
+            print "Success: For "+api+" : with parameter ["+str(parameter)+"] the expected result ["+str(results[parameters.index(parameter)])+"] is achieved"
+        else:
+            print "Failed: For "+api+" : with parameter ["+str(parameter)+"] the expected result ["+str(results[parameters.index(parameter)])+"] not achieved"
+
 
 def get_parameters_per_url(test_data):
     if "params_per_url" in test_data:
