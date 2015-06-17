@@ -8,25 +8,25 @@ def test_api(test_data):
     data_set_count = get_data_set_count(test_data)
     if method == 'get':
         parameters_per_url = get_parameters_per_url(test_data)
-        url_parameters = get_url_parameters(parameters_per_url, test_data)
-        results = get_results(url_parameters, test_data)
-        test_get(api, auth_details, url_parameters, results)
+        parameters = get_url_parameters(parameters_per_url, test_data)
+        results = get_results(parameters, test_data)
+        test_get(api, auth_details, parameters, results)
     elif method == 'post':
         parameters = get_parameters(data_set_count, test_data)
         results = get_results(parameters, test_data)
         test_post(api, auth_details, parameters, results)
 
-def test_get(api, auth_details, url_parameters, results):
-    for i in range(len(url_parameters)):
+def test_get(api, auth_details, parameters, results):
+    for i in range(len(parameters)):
         request_api = api
-        for parameter in url_parameters[i]:
+        for parameter in parameters[i]:
             request_api += str(parameter)
         response = requests.get(request_api, auth=auth_details)
         print response.json()
         if dict(response.json()) == results[i]:
-            print "Success: For "+request_api+" : with parameter ["+str(url_parameters)+"] the expected result ["+str(results[i])+"] is achieved"
+            print "Success: For "+request_api+" : with parameter ["+str(parameters)+"] the expected result ["+str(results[i])+"] is achieved"
         else:
-            print "Failed: For "+request_api+" : with parameter ["+str(url_parameters)+"] the expected result ["+str(results[i])+"] not achieved"
+            print "Failed: For "+request_api+" : with parameter ["+str(parameters)+"] the expected result ["+str(results[i])+"] not achieved"
 
 def test_post(api, auth_details, parameters, results):
     for parameter in parameters:
