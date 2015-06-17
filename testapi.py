@@ -65,10 +65,10 @@ def get_api(test_data):
         raise ValueError("APINotDefined")
 
 def get_parameters(data_set_count, test_data):
-    if data_set_count > 1 and "parameters" in test_data:
+    if data_set_count > 0 and "parameters" in test_data:
         return test_data["parameters"]
     else:
-        return None
+        raise ValueError("ParametersNotDefined")
 
 def get_results(parameters, test_data):
     if "results" in test_data:
