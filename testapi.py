@@ -35,7 +35,7 @@ def test_get(api, auth_details, parameters, results):
             print "Failed: For "+request_api+" : with parameter ["+str(parameters)+"] the expected result ["+str(results[i])+"] not achieved"
             no_of_tests += 1
             no_of_tests_failed += 1
-
+    
     print """
             ..........................................................................................................
             ran %d tests 
