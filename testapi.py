@@ -23,22 +23,54 @@ def test_get(api, auth_details, parameters, results):
             request_api += str(parameter)
         response = requests.get(request_api, auth=auth_details)
         print response.json()
+
+        no_of_tests = 0
+        no_of_tests_passed = 0
+        no_of_tests_failed = 0
         if dict(response.json()) == results[i]:
             print "Success: For "+request_api+" : with parameter ["+str(parameters)+"] the expected result ["+str(results[i])+"] is achieved"
+            no_of_tests += 1
+            no_of_tests_passed += 1
         else:
             print "Failed: For "+request_api+" : with parameter ["+str(parameters)+"] the expected result ["+str(results[i])+"] not achieved"
+            no_of_tests += 1
+            no_of_tests_failed += 1
+
+        print """
+            ..........................................................................................................
+            ran %d tests 
+            %d passed
+            %d failed
+            .........................................................................................................
+            """ % (no_of_tests, no_of_tests_passed, no_of_tests_failed)
 
 def test_post(api, auth_details, parameters, results):
-    for parameter in parameters:
+    for i, parameter in enumerate(parameters):
         print parameter
         response = requests.post(api, data=parameter, auth=auth_details)
-        print response.json()
-        print dict(response.json())
-        print results[parameters.index(parameter)]
-        if dict(response.json()) == results[parameters.index(parameter)]:
-            print "Success: For "+api+" : with parameter ["+str(parameter)+"] the expected result ["+str(results[parameters.index(parameter)])+"] is achieved"
+        result = response.json()
+        expected_result = json.loads(str(results[i]))
+        print result, expected_result
+
+        no_of_tests = 0
+        no_of_tests_passed = 0
+        no_of_tests_failed = 0
+        if result == expected_result:
+            print "Success: For "+api+" : with parameter ["+str(parameter)+"] the expected result ["+str(expected_result)+"] is achieved"
+            no_of_tests += 1
+            no_of_tests_passed += 1
         else:
-            print "Failed: For "+api+" : with parameter ["+str(parameter)+"] the expected result ["+str(results[parameters.index(parameter)])+"] not achieved"
+            print "Failed: For "+api+" : with parameter ["+str(parameter)+"] the expected result ["+str(expected_result)+"] not achieved"
+            no_of_tests += 1
+            no_of_tests_failed += 1
+
+    print """
+            ..........................................................................................................
+            ran %d tests 
+            %d passed
+            %d failed
+            .........................................................................................................
+            """ % (no_of_tests, no_of_tests_passed, no_of_tests_failed)
 
 
 def get_parameters_per_url(test_data):
